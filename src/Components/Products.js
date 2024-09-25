@@ -29,7 +29,7 @@ function Products() {
 
   return (
     <div className="py-2 md:py-16">
-      <div className="container mx-auto p-5">
+      <div className="container mx-auto px-6 md:px-16 py-4">
         <div className='flex justify-between'>
           <h2 className="text-sm md:text-3xl font-bold text-black mb-9 md:mb-20 ">Latest Products</h2>
           <Link to='allproducts'>

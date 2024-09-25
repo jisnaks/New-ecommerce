@@ -6,7 +6,7 @@ function Footer() {
         <footer className="bg-[#F5AAAA] text-white py-12 ">
             <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left column: Navigation and Social Icons */}
-                <div className="flex flex-col items-center lg:items-start ">
+                <div className="flex flex-col items-center lg:items-start px-32">
                     {/* Nav Links */}
                     <ul className="flex lg:flex-col gap-8 md:gap-3 text-start mb-4 md:mb-16 text-xs  md:text-base">
                         <li className="hover:text-gray-300 cursor-pointer">Home</li>
@@ -24,7 +24,7 @@ function Footer() {
                 </div>
 
                 {/* Right column: Newsletter text and form */}
-                <div className="flex flex-col  items-center lg:items-start lg:ml-auto">
+                <div className="flex flex-col mx-auto  items-center lg:items-start lg:ml-auto">
                     <h2 className="text-base md:text-xl font-bold mb-2 md:mb-4">Subscribe to our newsletter</h2>
                     <h3 className="text-xs md:text-lg mb-5 px-4 text-center lg:text-left">
                         The latest news, articles, and resources, sent to your inbox weekly.

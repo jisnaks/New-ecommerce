@@ -53,11 +53,13 @@ function AllProduct() {
           </ul>
         </div>
 
-        <div className="container mx-auto p-8">
-          <div className="w-64 md:w-full md:h-full grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="py-2 md:py-16">
+      <div className="container mx-auto px-6 md:px-16 py-4">
+      <div className="w-68 md:w-full md:h-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-8 ">
             {filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
+          </div>
           </div>
         </div>
       </div>
