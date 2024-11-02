@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa'; // Import star icons
 import NavBar from '../Components/NavBar';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart } from '../Features/Cart/CartSlice';
+import { addToCart } from '../Redux/Actions/CartActions';
 
 function Singledetails() {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const location = useLocation();
   const [details, setDetails] = useState({});
-  const cartItems = useSelector(state => state.cart.cartItems);
+  const {cartItems} = useSelector(state => state.cart);
+  const { loggedIn } = useSelector((state) => state.auth);
+
 
   useEffect(() => {
     const data = location.state.data;
@@ -17,7 +20,11 @@ function Singledetails() {
   }, []);
 
   const handleAddToCart = (details) => {
-    dispatch(addToCart(details));
+    if(loggedIn){
+      dispatch(addToCart(details));
+    }else{
+      navigate('/login')
+    }
   };
 
   const isInCart = cartItems.find(item => item.id === details.id);

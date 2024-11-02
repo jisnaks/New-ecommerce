@@ -2,8 +2,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ProductCard from './ProductCard';
-import { fetchProducts } from '../Features/Product/ProductSlice';
 import { Link } from 'react-router-dom';
+import { fetchProducts } from '../Redux/Actions/productActions';
 
 function Products() {
   const dispatch = useDispatch();

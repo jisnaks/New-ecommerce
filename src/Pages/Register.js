@@ -1,105 +1,168 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser } from '../Features/Auth/AuthSlice';
-import Login from '../assets/login.jpg'
-import NavBar from '../Components/NavBar'
 import { Link, useNavigate } from 'react-router-dom';
+import { registerUser } from '../Redux/Actions/AuthActions';
+import Login from '../assets/login.jpg';
+import NavBar from '../Components/NavBar';
 
 function Register() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [name, setName] = useState('');
-    const [formError, setFormError] = useState(''); // To handle validation errors
+    const [inputData, setInputData] = useState({
+        name: '',
+        age: '',
+        email: '',
+        password: ''
+    });
+    const [formError, setFormError] = useState({}); // Improved readability
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error,registered } = useSelector((state) => state.auth);
-    
+    const { loading, error, registered } = useSelector((state) => state.auth);
+
     useEffect(() => {
         if (registered) {
-            console.log(registered)
             navigate('/login');
         }
-    }, [registered, navigate]);  // This will run when `registered` changes
+    }, [registered, navigate]);
+
+    const handleChange = (e) => {
+        setInputData({ ...inputData, [e.target.name]: e.target.value });
+    };
+
+    const validateForm = (input) => {
+        const errors = {};
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const { name, age, email, password } = input;
+
+        if (!name.trim()) errors.name = 'Name is required';
+        if (!age) errors.age = 'Age is required';
+        else if (isNaN(age) || age < 18) errors.age = 'Enter a valid age (18+)';
+        
+        if (!email) {
+            errors.email = 'Email is required';
+        } else if (!emailRegex.test(email)) {
+            errors.email = 'Invalid email format';
+        }
+
+        if (!password) {
+            errors.password = 'Password is required';
+        } else if (password.length < 6) {
+            errors.password = 'Password must be at least 6 characters';
+        } else if (!/(?=.*[a-zA-Z])(?=.*[!@#$%^&*])/.test(password)) {
+            errors.password = 'Password must contain a letter and a symbol';
+        }
+
+        return errors;
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const errors = validateForm(inputData);
+        setFormError(errors);
 
-        // If everything is valid, dispatch the register action
-        dispatch(registerUser({ name, email, password }));
+        if (Object.keys(errors).length === 0) {
+            dispatch(registerUser(inputData)).then((res) => {
+                if (res && res.success) {
+                    setInputData({ name: '', age: '', email: '', password: '' }); // Clear form on success
+                    navigate('/');
+                }
+            });
+        }
     };
+
     return (
         <div>
             <NavBar />
-            <div class="min-h-screen bg-gray-50 text-gray-900 flex justify-center">
-                <div class="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
-                    <div class="flex-1 bg-[#fad5d5] text-center hidden lg:flex">
-                        <div class="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat">
-                            <img src={Login} />
+            <div className="min-h-screen bg-gray-50 text-gray-900 flex justify-center">
+                <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+                    <div className="flex-1 bg-[#fad5d5] text-center hidden lg:flex">
+                        <div className="m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat">
+                            <img src={Login} alt="Login" />
                         </div>
                     </div>
-                    <div class="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-
-                        <div class="mt-12 flex flex-col items-cente">
-                            <h1 class="text-2xl text-[#F5AAAA] xl:text-3xl mx-auto font-extrabold">
+                    <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+                        <div className="mt-12 flex flex-col items-center">
+                            <h1 className="text-2xl text-[#F5AAAA] xl:text-3xl mx-auto font-extrabold">
                                 Register
                             </h1>
-                            <div class="w-full flex-1 mt-8">
-
-                                <div class="mx-auto max-w-xs">
+                            <div className="w-full flex-1 mt-8">
+                                <div className="mx-auto max-w-xs">
                                     <form onSubmit={handleSubmit}>
                                         <input
-                                            class="w-full px-8 py-4 my-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                                            type="text" value={name}
-                                            onChange={(e) => setName(e.target.value)}
+                                            className="w-full px-8 py-4 my-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                                            type="text"
+                                            name="name"
+                                            value={inputData.name}
+                                            onChange={handleChange}
                                             placeholder="Name"
-                                            required />
+                                        />
+                                        {formError.name && <p className="text-red-500">{formError.name}</p>}
+
                                         <input
-                                            class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                            type="email" value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
+                                            className="w-full px-8 py-4 my-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                            type="number"
+                                            name="age"
+                                            value={inputData.age}
+                                            onChange={handleChange}
+                                            placeholder="Age"
+                                        />
+                                        {formError.age && <p className="text-red-500">{formError.age}</p>}
+
+                                        <input
+                                            className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                                            type="email"
+                                            name="email"
+                                            value={inputData.email}
+                                            onChange={handleChange}
                                             placeholder="Email"
-                                            required />
+                                        />
+                                        {formError.email && <p className="text-red-500">{formError.email}</p>}
+
                                         <input
-                                            class="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
-                                            type="password" value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+                                            type="password"
+                                            name="password"
+                                            value={inputData.password}
+                                            onChange={handleChange}
                                             placeholder="Password"
-                                            required />
-                                        <button type="submit" disabled={loading}
-                                            class="mt-5 tracking-wide font-semibold bg-[#F5AAAA] text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
-                                            {/* <svg class="w-6 h-6 -ml-2" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                                                <circle cx="8.5" cy="7" r="4" />
-                                                <path d="M20 8v6M23 11h-6" />
-                                            </svg> */}
+                                        />
+                                        {formError.password && <p className="text-red-500">{formError.password}</p>}
+
+                                        <button
+                                            type="submit"
+                                            disabled={loading}
+                                            className="mt-5 tracking-wide font-semibold bg-[#F5AAAA] text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                                        >
                                             {loading ? 'Registering...' : 'Register'}
                                         </button>
-                                        <p class="mt-6 text-xs text-gray-600 text-center">If already have account<br/><Link to='/login'><span className='text-cyan-500 underline '>Login</span></Link></p>
-                                        <p class="mt-6 text-xs text-gray-600 text-center">
-                                            I agree to abide by templatana's
-                                            <a href="#" class="border-b border-gray-500 border-dotted">
+
+                                        {error && <p className="text-red-500 pt-4 text-center">{error.message}</p>}
+
+                                        <p className="mt-6 text-xs text-gray-600 text-center">
+                                            If you already have an account, <br />
+                                            <Link to="/login" className="text-cyan-500 underline">
+                                                Login
+                                            </Link>
+                                        </p>
+
+                                        <p className="mt-6 text-xs text-gray-600 text-center">
+                                            I agree to abide by Templatana's
+                                            <a href="#" className="border-b border-gray-500 border-dotted">
                                                 Terms of Service
-                                            </a>
-                                            and its
-                                            <a href="#" class="border-b border-gray-500 border-dotted">
+                                            </a>{' '}
+                                            and its{' '}
+                                            <a href="#" className="border-b border-gray-500 border-dotted">
                                                 Privacy Policy
                                             </a>
                                         </p>
-                                        {/* Display form validation errors */}
-                                        {formError && <p style={{ color: 'red' }}>{formError}</p>}
-                                        {/* Display backend errors */}
-                                        {error && <p>{error.message}</p>}
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default Register
+export default Register;

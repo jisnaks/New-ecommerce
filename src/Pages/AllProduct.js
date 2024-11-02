@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, setCategoryFilter, setPriceFilter } from '../Features/Product/ProductSlice';
 import ProductCard from '../Components/ProductCard';
 import NavBar from '../Components/NavBar';
+import {fetchProducts, setCategoryFilter, setPriceFilter } from '../Redux/Actions/productActions';
 
 function AllProduct() {
   const dispatch = useDispatch();
